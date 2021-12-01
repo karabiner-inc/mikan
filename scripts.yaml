@@ -1,0 +1,18 @@
+scripts:
+  cli:
+    desc: call notion api
+    cmd: deno run src/cli.ts
+    noCheck: true
+    unstable: true
+    allow:
+      read: true
+      env: true
+      net: true
+  test:
+    desc: test
+    cmd: deno test
+    noCheck: true
+    env:
+      DEBUG_MODE: "true"
+    allow:
+      all: true
