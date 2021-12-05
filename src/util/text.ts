@@ -9,6 +9,6 @@ import { parse } from "@/deps.ts";
  * @param filePath
  * @returns file title
  */
-export const getFileTitle = (filePath: string): string | undefined => {
+export const getFileTitle = (filePath: string): string => {
   return parse(filePath).name;
 };

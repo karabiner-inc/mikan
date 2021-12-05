@@ -1,4 +1,4 @@
-import { DEBUG_MODE, NOTION_ROOT_PARENT_ID } from "./constant.ts";
+import { NOTION_ROOT_PARENT_ID } from "./constant.ts";
 import { types } from "@/di/types.ts";
 import { Client, Inject, Service } from "./deps.ts";
 import { PageInfo } from "./type/PageInfo.ts";
@@ -14,11 +14,11 @@ export class Api {
       const { id, properties } = await this.client.pages.retrieve({
         page_id: pageId,
       });
-      log.debug({ id });
+      // log.debug({ id });
       return true;
     } catch (error: any) {
-      console.error("page doesn't exist");
-      console.error(error?.body);
+      log.error("page doesn't exist");
+      log.error(error?.body);
       return false;
     }
   };
@@ -41,10 +41,9 @@ export class Api {
         },
         children: blocks,
       });
-      log.debug({ id, parent });
+      // log.debug({ id, parent });
     } catch (error: any) {
-      console.clear();
-      console.error(error?.body);
+      log.error(error?.body);
     }
   };
 
@@ -56,19 +55,21 @@ export class Api {
         block_id,
         children: contents,
       });
-      log.debug({ has_more, results });
+      // log.debug({ has_more, results });
     } catch (error: any) {
-      console.clear();
-      console.error(error?.body);
+      log.error(error?.body);
     }
   };
 
   // 空ページを追加
-  addEmptyPage = async (title: string, pageId = NOTION_ROOT_PARENT_ID) => {
+  addEmptyPage = async (
+    title: string,
+    parentPageId = NOTION_ROOT_PARENT_ID
+  ) => {
     try {
       await sleep();
       const { id, parent } = await this.client.pages.create({
-        parent: { page_id: pageId },
+        parent: { page_id: parentPageId },
         properties: {
           title: [
             {
@@ -80,11 +81,10 @@ export class Api {
         },
         children: [],
       });
-      log.debug({ id, parent });
+      // log.debug({ id, parent });
       return id;
     } catch (error: any) {
-      console.clear();
-      console.error(error?.body);
+      log.error(error?.body);
       return "";
     }
   };
@@ -96,18 +96,7 @@ export class Api {
     title: string,
     parentPageId: string
   ): Promise<PageInfo> => {
-    if (
-      (await this.isPageExist(parentPageId)) &&
-      parentPageId === NOTION_ROOT_PARENT_ID
-    ) {
-      const pageId = await this.addEmptyPage(title, NOTION_ROOT_PARENT_ID);
-      return { title, pageId: pageId, parentPageId };
-    } else {
-      const pageId = await this.addEmptyPage(title, parentPageId);
-      return { title, pageId, parentPageId };
-    }
-  };
-  hello = () => {
-    console.log("hello");
+    const pageId = await this.addEmptyPage(title, parentPageId);
+    return { title, pageId, parentPageId };
   };
 }
