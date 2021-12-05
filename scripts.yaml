@@ -17,3 +17,5 @@ scripts:
       DEBUG_MODE: "true"
     allow:
       all: true
+  doc:
+    cmd: gh markdown-preview --light-mode --reload --verbose README.md
