@@ -24,8 +24,7 @@ export { CompletionsCommand } from "https://deno.land/x/cliffy@v0.20.1/command/c
 export { HelpCommand } from "https://deno.land/x/cliffy@v0.20.1/command/help/mod.ts";
 
 // spinner
-import Kia from "https://deno.land/x/kia@v0.1.0/mod.ts";
-
+import Kia from "https://deno.land/x/kia@0.3.0/mod.ts";
 export { Kia };
 
 // notion

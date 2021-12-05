@@ -19,7 +19,7 @@ const filePathList = readDirRecursively(rootDirectory);
 const pageInfoList = new PageInfoList();
 
 const api = apiServiceCollection.get(Api);
-const kia = new Kia("motion");
+const spinner = new Kia();
 
 const createEmptyNotionPage = async (
   path: string,
@@ -42,10 +42,13 @@ const createEmptyNotionPage = async (
  * @param pageId ページID
  */
 const addContent = async (path: string, pageId: string): Promise<void> => {
-  await kia.start();
-  await kia.set({ text: `add contents: ${parse(path).base}`, indent: 4 });
+  // await spinner.start();
+  const spinnerText = `add contents: ${parse(path).base}`;
+  spinner.start();
+  spinner.set({ text: spinnerText, indent: 4 });
   const blocks = convertBlocksFromMarkdown(path);
   await api.appendChildrenBlock(pageId, blocks);
+  spinner.stop();
 };
 
 /**
@@ -62,16 +65,18 @@ const splitPath = (path: string): string[] => {
  * @param path ディレクトリパス
  */
 const createNotionPage = async (path: string): Promise<void> => {
-  await kia.start();
+  // await spinner.start();
   let parentPageId = NOTION_ROOT_PARENT_ID;
 
   // ルートページであれば新規作成|ページがまだなければ新規作成
   await AsyncRay(splitPath(path)).aForEach(async (str: string) => {
-    await kia.set({ text: `creating ${str}`, indent: 2 });
+    const spinnerText = `creating ${str}`;
+    spinner.start();
+    spinner.set({ text: spinnerText, indent: 2 });
     const pageInfo = await createEmptyNotionPage(str, parentPageId);
     parentPageId = pageInfo.pageId;
   });
-  await kia.succeed(`created ${path}`);
+  spinner.succeed(`created ${path}`);
 
   // コンテンツの追加
   const pageId = parentPageId;
