@@ -1,6 +1,7 @@
+import { parse } from "@/deps.ts";
+
 /**
  * get file title from filePath
- * # Example
  * ```
  * getFileTitle("/path/to/hoge.txt");
  * // => hoge
@@ -9,8 +10,5 @@
  * @returns file title
  */
 export const getFileTitle = (filePath: string): string | undefined => {
-  return filePath
-    .split("/")
-    .at(-1)
-    ?.replace(/\.[^/.]+$/, "");
+  return parse(filePath).name;
 };

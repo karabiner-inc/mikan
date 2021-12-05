@@ -14,7 +14,21 @@ apiServiceCollection.addTransient(Api);
 export const apiMockServiceCollection = new ServiceCollection();
 const stubClient = Rhum.stubbed(new Client({ auth: NOTION_API_KEY }));
 stubClient.stub("pages", {
-  create: ({ parent: {}, properties: {} }) => ({ page_id: "asdf" }),
+  create: (_param: {
+    parent: {};
+    properties: {};
+  }): Promise<{ id: number; parent: any; page_id: string }> => {
+    return new Promise((resolve, _reject) => {
+      resolve({ id: 1, parent: {}, page_id: "asdf" });
+    });
+  },
+  retrieve: (_param: {
+    page_id: string;
+  }): Promise<{ id: number; properties: any }> => {
+    return new Promise((resolve, _reject) => {
+      resolve({ id: 1, properties: {} });
+    });
+  },
 });
 apiMockServiceCollection.addStatic(types.client, stubClient);
 apiMockServiceCollection.addTransient(Api);

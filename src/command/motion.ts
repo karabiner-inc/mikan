@@ -6,7 +6,7 @@ import { apiServiceCollection } from "@/di/serviceCollection.ts";
 import { Command } from "@/type/Command.ts";
 import {
   getFileTitle,
-  readdirRecursively,
+  readDirRecursively,
   getBlocksFromMarkdown,
   echoHeader,
   echoFinish,
@@ -15,7 +15,7 @@ import {
 const rootDirectory = "./md";
 let parentPageId = NOTION_ROOT_PARENT_ID;
 const pageInfoList = new PageInfoList();
-const filePathList = readdirRecursively(rootDirectory);
+const filePathList = readDirRecursively(rootDirectory);
 const api = apiServiceCollection.get(Api);
 const kia = new Kia("motion");
 
