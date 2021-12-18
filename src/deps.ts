@@ -4,8 +4,8 @@ export {
   dirname,
   extname,
   parse,
-} from "https://deno.land/std@0.116.0/path/mod.ts";
-export { printf } from "https://deno.land/std@0.116.0/fmt/printf.ts";
+} from "https://deno.land/std@0.118.0/path/mod.ts";
+export { printf } from "https://deno.land/std@0.118.0/fmt/printf.ts";
 
 // dotenv
 export { config } from "https://deno.land/x/dotenv@v3.1.0/mod.ts";
@@ -24,7 +24,7 @@ export { CompletionsCommand } from "https://deno.land/x/cliffy@v0.20.1/command/c
 export { HelpCommand } from "https://deno.land/x/cliffy@v0.20.1/command/help/mod.ts";
 
 // spinner
-import Kia from "https://deno.land/x/kia@0.3.0/mod.ts";
+import Kia from "https://deno.land/x/kia@v0.1.0/mod.ts";
 export { Kia };
 
 // notion
@@ -33,7 +33,7 @@ export {
   LogLevel as NotionLogLevel,
   APIErrorCode,
   APIResponseError,
-} from "https://deno.land/x/notion_sdk@v0.4.4/src/mod.ts";
+} from "https://deno.land/x/notion_sdk@v0.4.9/src/mod.ts";
 
 // markdown to notion-block
 export * as martian from "https://esm.sh/@tryfabric/martian@1.1.0?dts";
