@@ -1,5 +1,6 @@
 {
   "imports": {
     "mikan": "./mikan",
+    "converter": "./converter",
   }
 }
