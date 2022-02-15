@@ -6,7 +6,3 @@ export {
 } from "https://cdn.skypack.dev/node-html-markdown?dts";
 export type { NodeHtmlMarkdownOptions } from "https://cdn.skypack.dev/node-html-markdown?dts";
 export { AsyncRay } from "https://deno.land/x/async_ray/mod.ts";
-export {
-  assertEquals,
-  assertObjectMatch,
-} from "https://deno.land/std@0.125.0/testing/asserts.ts";
