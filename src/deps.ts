@@ -24,7 +24,7 @@ export { CompletionsCommand } from "https://deno.land/x/cliffy@v0.20.1/command/c
 export { HelpCommand } from "https://deno.land/x/cliffy@v0.20.1/command/help/mod.ts";
 
 // spinner
-import Kia from "https://deno.land/x/kia@v0.1.0/mod.ts";
+import Kia from "https://deno.land/x/kia@0.3.0/mod.ts";
 export { Kia };
 
 // notion
@@ -36,7 +36,7 @@ export {
 } from "https://deno.land/x/notion_sdk@v0.4.9/src/mod.ts";
 
 // markdown to notion-block
-export * as martian from "https://esm.sh/@tryfabric/martian@1.1.0?dts";
+export * as martian from "https://esm.sh/@tryfabric/martian@1.1.1?dts";
 
 // emoji
 export { emojify } from "https://deno.land/x/emoji@0.1.2/mod.ts";
