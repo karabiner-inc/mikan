@@ -1,6 +1,6 @@
 unstable: true
-tsconfig: ./tsconfig.json
-imap: ./import_map.json
+config: ./tsconfig.json
+iportMap: ./import_map.json
 
 scripts:
   cli:
@@ -10,12 +10,16 @@ scripts:
       read: true
       env: true
       net: true
-  test:
-    desc: test
+  test:all:
     cmd: deno test
     env:
       DEBUG_MODE: "true"
     allow:
       all: true
+  test:converter:
+    cmd: deno test converter
+    allow:
+      all: true
+    noCheck: true
   doc:
     cmd: gh markdown-preview --light-mode --reload --verbose README.md
