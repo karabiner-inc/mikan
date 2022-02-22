@@ -1,5 +1,5 @@
-import { colors, Command, CompletionsCommand, HelpCommand } from "./deps.ts";
-import { motion } from "./command/motion.ts";
+import { colors, Command, CompletionsCommand, HelpCommand } from "@/deps.ts";
+import { motion } from "@/command/motion.ts";
 
 const name = "mikan";
 const description = `
@@ -22,8 +22,7 @@ await new Command()
   .env("NOTION_DATABASE_ID=<value:string>", "Notion database id")
   .example(example.title, example.contents)
   .arguments("<command> [option]")
-  .command(motion.name, motion.desc)
-  .action(motion.action)
+  .command(motion.getName(), motion)
   .option("-d, --directory [directory:string]", "directory store markdown file")
   .command("help", new HelpCommand().global())
   .command("completions", new CompletionsCommand())
