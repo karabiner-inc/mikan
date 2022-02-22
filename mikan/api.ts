@@ -2,11 +2,58 @@ import { NOTION_ROOT_PARENT_ID } from "./constant.ts";
 import { types } from "@/di/types.ts";
 import { Client, Inject, Service } from "./deps.ts";
 import { PageInfo } from "./type/PageInfo.ts";
-import { sleep, log } from "./util/util.ts";
+import { log, sleep } from "./util/util.ts";
 
 @Service()
 export class Api {
   constructor(@Inject(types.client) private client: Client) {}
+
+  // ページ内のブロックを取得
+  async getBlock(blockId: string) {
+    await sleep();
+    try {
+      const response = await this.client.blocks.retrieve({
+        block_id: blockId,
+      });
+      console.log(response);
+    } catch (error: any) {
+      log.error(error?.body);
+      return false;
+    }
+  }
+
+  async getChildBlock(blockId: string) {
+    await sleep();
+    try {
+      const response = await this.client.blocks.children.list({
+        block_id: blockId,
+      });
+      log.debug(response);
+    } catch (error: any) {
+      log.error(error?.body);
+      return false;
+    }
+  }
+
+  async updateBlock(blockId: string, block: { type: string; content: any }) {
+    await sleep();
+    try {
+      console.log({
+        block_id: blockId,
+        [block.type]: block.content,
+      });
+      const response = await this.client.blocks.update({
+        block_id: blockId,
+        [block.type]: block.content,
+      });
+      console.log(response);
+    } catch (error: any) {
+      log.error(JSON.parse(error?.body).message);
+    }
+  }
+
+  async updatePage() {}
+
   // ページがすでに存在するか判定
   isPageExist = async (pageId: string): Promise<boolean> => {
     try {
@@ -64,7 +111,7 @@ export class Api {
   // 空ページを追加
   addEmptyPage = async (
     title: string,
-    parentPageId = NOTION_ROOT_PARENT_ID
+    parentPageId = NOTION_ROOT_PARENT_ID,
   ) => {
     try {
       await sleep();
@@ -91,10 +138,10 @@ export class Api {
 
   /**
    * ページをよしなに作成
-   * */
+   */
   createPage = async (
     title: string,
-    parentPageId: string
+    parentPageId: string,
   ): Promise<PageInfo> => {
     const pageId = await this.addEmptyPage(title, parentPageId);
     return { title, pageId, parentPageId };

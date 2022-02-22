@@ -1,5 +1,6 @@
 /* std */
 export {
+  assert,
   assertEquals,
   assertNotEquals,
   assertNotMatch,
