@@ -1,5 +1,5 @@
-import { colors, emojify } from "@/deps.ts";
-import { DEBUG_MODE } from "@/constant.ts";
+import { colors, emojify } from "../deps.ts";
+import { DEBUG_MODE } from "../constant.ts";
 import { isString } from "./type.ts";
 
 const logColor = {

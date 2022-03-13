@@ -1,9 +1,9 @@
-import { Api } from "@/api.ts";
-import { NOTION_ROOT_PARENT_ID } from "@/constant.ts";
-import { AsyncRay, Command, Kia, parse } from "@/deps.ts";
-import { PageInfoList } from "@/PageInfoList.ts";
-import { apiServiceCollection } from "@/di/serviceCollection.ts";
-import { PageInfo } from "@/type/PageInfo.ts";
+import { Api } from "../api.ts";
+import { NOTION_ROOT_PARENT_ID } from "../constant.ts";
+import { AsyncRay, Command, Kia, parse } from "../deps.ts";
+import { PageInfoList } from "../PageInfoList.ts";
+import { apiServiceCollection } from "../di/serviceCollection.ts";
+import { PageInfo } from "../type/PageInfo.ts";
 import {
   convertBlocksFromMarkdown,
   echoFinish,
@@ -11,7 +11,7 @@ import {
   getFileTitle,
   log,
   readDirRecursively,
-} from "@/util/util.ts";
+} from "../util/util.ts";
 
 const rootDirectory = "./md";
 const filePathList = readDirRecursively(rootDirectory);

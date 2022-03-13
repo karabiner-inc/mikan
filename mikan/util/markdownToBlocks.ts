@@ -1,4 +1,4 @@
-import { martian } from "@/deps.ts";
+import { martian } from "../deps.ts";
 type GetBlocksFromMarkdown = {
   (filePath: string): any[];
 };
@@ -6,5 +6,5 @@ type GetBlocksFromMarkdown = {
 export const convertBlocksFromMarkdown: GetBlocksFromMarkdown = (filePath) => {
   const decoder = new TextDecoder("utf-8");
   const content = Deno.readFileSync(filePath);
-  return martian.markdownToBlocks(decoder.decode(content));
+  return martian.markdownToBlocks(decoder.decode(content), true);
 };

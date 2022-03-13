@@ -1,11 +1,10 @@
 unstable: true
 config: ./tsconfig.json
-iportMap: ./import_map.json
 
 scripts:
   cli:
     desc: call notion api
-    cmd: deno run src/cli.ts
+    cmd: deno run mikan/cli.ts
     allow:
       read: true
       env: true

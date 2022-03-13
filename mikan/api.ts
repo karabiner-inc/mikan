@@ -1,5 +1,5 @@
 import { NOTION_ROOT_PARENT_ID } from "./constant.ts";
-import { types } from "@/di/types.ts";
+import { types } from "./di/types.ts";
 import { Client, Inject, Service } from "./deps.ts";
 import { PageInfo } from "./type/PageInfo.ts";
 import { log, sleep } from "./util/util.ts";
