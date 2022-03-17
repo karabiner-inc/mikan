@@ -1,9 +1,9 @@
-import { Api } from "@/api.ts";
-import { NOTION_ROOT_PARENT_ID } from "@/constant.ts";
-import { AsyncRay, Command, Kia, parse } from "@/deps.ts";
-import { PageInfoList } from "@/PageInfoList.ts";
-import { apiServiceCollection } from "@/di/serviceCollection.ts";
-import { PageInfo } from "@/type/PageInfo.ts";
+import { Api } from "../api.ts";
+import { NOTION_ROOT_PARENT_ID } from "../constant.ts";
+import { AsyncRay, Command, Kia, parse } from "../deps.ts";
+import { PageInfoList } from "../PageInfoList.ts";
+import { apiServiceCollection } from "../di/serviceCollection.ts";
+import { PageInfo } from "../type/PageInfo.ts";
 import {
   convertBlocksFromMarkdown,
   echoFinish,
@@ -11,7 +11,7 @@ import {
   getFileTitle,
   log,
   readDirRecursively,
-} from "@/util/util.ts";
+} from "../util/util.ts";
 
 const rootDirectory = "./md";
 const filePathList = readDirRecursively(rootDirectory);
@@ -22,7 +22,7 @@ const spinner = new Kia();
 
 const createEmptyNotionPage = async (
   path: string,
-  parentPageId: string,
+  parentPageId: string
 ): Promise<PageInfo> => {
   const title = getFileTitle(path);
   const pageInfo = pageInfoList.findByTitle(title, parentPageId);
@@ -85,11 +85,8 @@ const createNotionPage = async (path: string): Promise<void> => {
 export const motion = new Command()
   .name("motion")
   .description("import md to Notion")
-  .action(async (options: any) => {
+  .action(async (_options: any) => {
     echoHeader("mikan motion");
-    log.debug(options);
-    await AsyncRay(filePathList).aForEach(async (filePath: string) => {
-      await createNotionPage(filePath);
-    });
+    await AsyncRay(filePathList).aForEach(createNotionPage);
     echoFinish();
   });

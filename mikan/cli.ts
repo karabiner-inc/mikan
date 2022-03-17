@@ -1,7 +1,7 @@
-import { colors, Command, CompletionsCommand, HelpCommand } from "@/deps.ts";
-import { motion } from "@/command/motion.ts";
-import { get } from "@/command/get.ts";
-import { update } from "@/command/update.ts";
+import { colors, Command, CompletionsCommand, HelpCommand } from "./deps.ts";
+import { motion } from "./command/motion.ts";
+import { get } from "./command/get.ts";
+import { update } from "./command/update.ts";
 
 const name = "mikan";
 const description = `

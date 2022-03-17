@@ -5,7 +5,7 @@ export * from "./text.ts";
 export * from "./type.ts";
 export * from "./markdownToBlocks.ts";
 
-import { ansi, colors, emojify } from "@/deps.ts";
+import { ansi, colors, emojify } from "../deps.ts";
 
 export const echoHeader = (text: string) => {
   const header = `| ${text} |`;

@@ -1,5 +1,5 @@
 import { getFileTitle } from "./text.ts";
-import { assertEquals } from "@/dev_deps.ts";
+import { assertEquals } from "../dev_deps.ts";
 
 Deno.test("simple file name", () => {
   const filePath = "./md/dir1/dir2/idr3/test.md";
