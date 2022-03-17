@@ -111,7 +111,7 @@ export class Api {
   // 空ページを追加
   addEmptyPage = async (
     title: string,
-    parentPageId = NOTION_ROOT_PARENT_ID,
+    parentPageId = NOTION_ROOT_PARENT_ID
   ) => {
     try {
       await sleep();
@@ -141,7 +141,7 @@ export class Api {
    */
   createPage = async (
     title: string,
-    parentPageId: string,
+    parentPageId: string
   ): Promise<PageInfo> => {
     const pageId = await this.addEmptyPage(title, parentPageId);
     return { title, pageId, parentPageId };

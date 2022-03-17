@@ -2,6 +2,7 @@ import { Api } from "../api.ts";
 import { Command } from "../deps.ts";
 import { echoFinish, echoHeader, log } from "../util/util.ts";
 import { apiServiceCollection } from "../di/serviceCollection.ts";
+// import { NOTION_ROOT_PARENT_ID } from "../constant.ts";
 
 const api = apiServiceCollection.get(Api);
 
@@ -13,7 +14,7 @@ export const update = new Command()
     echoHeader("mikan get block");
     switch (target) {
       case "page":
-        await api.updatePage(NOTION_ROOT_PARENT_ID);
+        await api.updatePage();
         break;
       case "block":
         break;
