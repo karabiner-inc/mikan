@@ -1,4 +1,6 @@
-import { assertEquals, pathResolverFactory } from "../../dev_deps.ts";
+import { assert, assertEquals } from "../../dev_deps.ts";
+import { existsFile } from "../util.ts";
+import { pathResolverFactory } from "../../util.ts";
 import { convert } from "../converter.ts";
 
 const resolve = pathResolverFactory(import.meta);
@@ -40,9 +42,23 @@ Deno.test("convert from file", async () => {
 
 ## subtitle
 `;
-  const testFilePath = resolve("./test.md");
+  const fileName = "./test_img.md";
+  const testFilePath = resolve(fileName);
   const md = await Deno.readTextFile(testFilePath);
-  const actual = await convert(md);
+  const actual = await convert(md, fileName);
 
   assertEquals(actual, expect);
+});
+
+Deno.test("convert from file with log", async () => {
+  const testIframeFile = resolve("./test_iframe.md");
+  const testIframe = await Deno.readTextFile(testIframeFile);
+  await convert(testIframe, testIframeFile);
+
+  const testTableFile = resolve("./test_table.md");
+  const testTable = await Deno.readTextFile(testTableFile);
+  await convert(testTable, testTableFile);
+
+  existsFile("output.json")
+    .then((result) => assert(result));
 });
