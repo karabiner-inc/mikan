@@ -46,7 +46,7 @@ export const convert = async (md: string, fileName?: string) => {
     return child;
   });
 
-  const file = processor.stringify(ast as any);
+  const file = processor.stringify(ast as Root);
 
   return file as string;
 };
