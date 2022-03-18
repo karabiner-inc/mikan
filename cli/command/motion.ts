@@ -1,11 +1,12 @@
+import { parse } from "../../deps.ts";
+import { AsyncRay, Command, Kia } from "../deps.ts";
 import { Api } from "../api.ts";
 import { NOTION_ROOT_PARENT_ID } from "../constant.ts";
-import { AsyncRay, Command, Kia, parse } from "../deps.ts";
 import { PageInfoList } from "../PageInfoList.ts";
 import { apiServiceCollection } from "../di/serviceCollection.ts";
 import { PageInfo } from "../type/PageInfo.ts";
 import {
-  convertBlocksFromMarkdown,
+  convertMarkdownToNotionBlock,
   echoFinish,
   echoHeader,
   getFileTitle,
@@ -22,7 +23,7 @@ const spinner = new Kia();
 
 const createEmptyNotionPage = async (
   path: string,
-  parentPageId: string
+  parentPageId: string,
 ): Promise<PageInfo> => {
   const title = getFileTitle(path);
   const pageInfo = pageInfoList.findByTitle(title, parentPageId);
@@ -45,7 +46,7 @@ const addContent = async (path: string, pageId: string): Promise<void> => {
   const spinnerText = `add contents: ${parse(path).base}`;
   spinner.start();
   spinner.set({ text: spinnerText, indent: 4 });
-  const blocks = convertBlocksFromMarkdown(path);
+  const blocks = await convertMarkdownToNotionBlock(path);
   await api.appendChildrenBlock(pageId, blocks);
   spinner.stop();
 };

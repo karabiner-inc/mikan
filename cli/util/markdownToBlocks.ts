@@ -1,10 +1,22 @@
-import { martian } from "../deps.ts";
-type GetBlocksFromMarkdown = {
-  (filePath: string): any[];
-};
+import { extname } from "../../deps.ts";
+import { convert } from "../../converter/mod.ts";
+import { markdownToBlocks } from "../deps.ts";
 
-export const convertBlocksFromMarkdown: GetBlocksFromMarkdown = (filePath) => {
-  const decoder = new TextDecoder("utf-8");
-  const content = Deno.readFileSync(filePath);
-  return martian.markdownToBlocks(decoder.decode(content), true);
+/**
+ * markdownをNotionブロックに変換
+ */
+export const convertMarkdownToNotionBlock = async (filePath: string) => {
+  if (extname(filePath) !== ".md") {
+    throw new Error("cannot support file type");
+  }
+
+  try {
+    const content = Deno.readTextFileSync(filePath);
+    const converted = await convert(content, filePath);
+    return markdownToBlocks(converted, true);
+  } catch (e) {
+    const error = e as Error;
+    console.error(error.message);
+    return [];
+  }
 };
