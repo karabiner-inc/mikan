@@ -1,5 +1,5 @@
 import { log } from "./logger.ts";
-import { faker, assert, Rhum } from "@/dev_deps.ts";
+import { assert, faker, Rhum } from "../dev_deps.ts";
 
 const range = (num: number) => Array.from(Array(num), (_val, key) => key);
 const createHugeArray = () => {
