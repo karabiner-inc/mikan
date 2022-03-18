@@ -1,6 +1,3 @@
-/* std */
-
-/* third party */
 export { remark } from "https://esm.sh/remark?dts";
 import remarkGfm from "https://esm.sh/remark-gfm?dts";
 export { remarkGfm };

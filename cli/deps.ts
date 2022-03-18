@@ -1,12 +1,3 @@
-// standard library
-export {
-  basename,
-  dirname,
-  extname,
-  parse,
-} from "https://deno.land/std@0.118.0/path/mod.ts";
-export { printf } from "https://deno.land/std@0.118.0/fmt/printf.ts";
-
 // dotenv
 export { config } from "https://deno.land/x/dotenv@v3.1.0/mod.ts";
 
