@@ -20,14 +20,17 @@ export { Kia };
 
 // notion
 export {
-  Client,
-  LogLevel as NotionLogLevel,
   APIErrorCode,
   APIResponseError,
+  Client,
+  LogLevel as NotionLogLevel,
 } from "https://deno.land/x/notion_sdk@v0.4.9/src/mod.ts";
 
 // markdown to notion-block
-export * as martian from "https://esm.sh/@tryfabric/martian@1.1.1?dts";
+export {
+  markdownToBlocks,
+  markdownToRichText,
+} from "https://esm.sh/@tryfabric/martian@1.1.1?dts";
 
 // emoji
 export { emojify } from "https://deno.land/x/emoji@0.1.2/mod.ts";
