@@ -15,6 +15,11 @@ scripts:
       DEBUG_MODE: "true"
     allow:
       all: true
+  test:cli:
+    cmd: deno test cli
+    allow:
+      all: true
+    noCheck: true
   test:unofficialNotionClient:
     cmd: deno test ./unofficialNotionClient/test/
     noCheck: true
