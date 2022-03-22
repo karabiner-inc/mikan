@@ -5,7 +5,7 @@ import { assertEquals } from "../../dev_deps.ts";
 const resolve = pathResolverFactory(import.meta);
 
 Deno.test("convert simle markdown", async (test) => {
-  const blocks = await convertMarkdownToNotionBlock(
+  const { blocks } = await convertMarkdownToNotionBlock(
     resolve("../test/md/sample1.md"),
   );
 
@@ -36,7 +36,7 @@ Deno.test("convert simle markdown", async (test) => {
 });
 
 Deno.test("convert markdown containing img tags", async (test) => {
-  const blocks = await convertMarkdownToNotionBlock(
+  const { blocks } = await convertMarkdownToNotionBlock(
     resolve("../test/md/image.md"),
   );
 
@@ -53,7 +53,6 @@ Deno.test("convert markdown containing img tags", async (test) => {
     test.step({
       name: `block is ${expect.type}`,
       fn: () => {
-        console.log(blocks[i]);
         assertEquals(blocks[i].object, expect.object);
         assertEquals(blocks[i].type, expect.type);
       },
@@ -65,13 +64,13 @@ Deno.test("convert markdown containing img tags", async (test) => {
 });
 
 Deno.test("convert real markdown file exported from notepm", async (test) => {
-  const blocks = await convertMarkdownToNotionBlock(
+  const { blocks } = await convertMarkdownToNotionBlock(
     resolve("../test/md/real_image.md"),
   );
 
   const imageBlocks = blocks.filter((block) => block.type === "image");
 
-  await test.step("file contains 2 image block", () => {
+  await test.step("file contains 2 image blocks", () => {
     assertEquals(imageBlocks.length, 2);
   });
 });

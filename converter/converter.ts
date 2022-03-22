@@ -8,73 +8,83 @@ import {
   Root,
 } from "./deps.ts";
 import { hasIframe, log } from "./util.ts";
-import type { Attachment, Result } from "../processor/yaml.ts";
+import type {
+  Attachment,
+  FrontmatterProcessor,
+  Result,
+} from "../processor/yaml.ts";
 
-type ConverterParam<T> = {
+type ConverterParam = {
   readonly mdString: string;
   readonly fileName: string;
-  readonly frontmatterProcessor: (yamlString: string) => Result<T>;
 };
 
 type ConvertedMarkdown = {
-  md: string;
-  frontmatter: any;
+  readonly md: string;
+  readonly frontmatter: Result<Attachment[]>;
 };
 
-/**
- * Convert inline html to markdown syntax as much as possible
- *
- * support tag
- * <iframe> -> output log
- * Table -> output log
- * <img> -> convert ![](url)
- *
- * frontmatter support
- * yaml
- *
- * @param param
- * @param param.mdString string of markdown
- * @param param.fileName
- * @param param.frontmatterProcessor function processing frontmatter
- *
- * @returns return
- * @returns return.md converted string of markdown
- * @returns return.frontmatter frontmatte object
- */
-export async function convert(
-  param: ConverterParam<Attachment[]>,
-): Promise<ConvertedMarkdown> {
-  let frontmatter;
-  const processor = remark()
+export class Converter {
+  private frontmatterProcessor: FrontmatterProcessor<Attachment[]>;
+  private mdParser = remark()
     .use(remarkGfm) // support github-flavored-markdown
-    .use(remarkFrontmatter) // support frontmatter
-  ;
-  const ast: Parent = await processor.parse(param.mdString);
+    .use(remarkFrontmatter);
 
-  ast.children = await AsyncRay(ast.children).aMap(async (child) => {
-    switch (child.type) {
-      case "html":
-        // if iframe tag found, output log
-        if (hasIframe(child.value)) {
-          log({ fileName: param.fileName, type: "iframe" });
-        } else {
-          // convert html -> md
-          const md = NodeHtmlMarkdown.translate(child.value);
-          const childAst = await processor.parse(md);
-          return childAst.children[0];
-        }
-        break;
-      case "table":
-        log({ fileName: param.fileName, type: "table" });
-        break;
-      case "yaml":
-        frontmatter = param.frontmatterProcessor(child.value);
-        break;
-    }
-    return child;
-  });
+  constructor(
+    frontmatterProcessor: FrontmatterProcessor<Attachment[]>,
+  ) {
+    this.frontmatterProcessor = frontmatterProcessor;
+  }
 
-  const md = processor.stringify(ast as Root) as string;
+  /**
+   * Convert inline html to markdown syntax as much as possible
+   *
+   * support tag
+   * <iframe> -> output log
+   * Table -> output log
+   * <img> -> convert ![](url)
+   *
+   * frontmatter support
+   * yaml
+   *
+   * @param param
+   * @param param.mdString string of markdown
+   * @param param.fileName
+   * @param param.frontmatterProcessor function processing frontmatter
+   *
+   * @returns return
+   * @returns return.md converted string of markdown
+   * @returns return.frontmatter frontmatte object
+   */
+  async convert(param: ConverterParam): Promise<ConvertedMarkdown> {
+    let frontmatter: Result<Attachment[]> = { valid: false, value: undefined };
+    const ast: Parent = await this.mdParser.parse(param.mdString);
 
-  return { md, frontmatter };
+    ast.children = await AsyncRay(ast.children).aMap(async (child) => {
+      switch (child.type) {
+        case "html":
+          // if iframe tag found, output log
+          if (hasIframe(child.value)) {
+            log({ fileName: param.fileName, type: "iframe" });
+          } else {
+            // convert html -> md
+            const md = NodeHtmlMarkdown.translate(child.value);
+            const childAst = await this.mdParser.parse(md);
+            return childAst.children[0];
+          }
+          break;
+        case "table":
+          log({ fileName: param.fileName, type: "table" });
+          break;
+        case "yaml":
+          frontmatter = this.frontmatterProcessor(child.value);
+          break;
+      }
+      return child;
+    });
+
+    const md = this.mdParser.stringify(ast as Root) as string;
+
+    return { md, frontmatter };
+  }
 }

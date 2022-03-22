@@ -1,7 +1,7 @@
 import { extname } from "../../deps.ts";
-import { convert } from "../../converter/converter.ts";
-import { parseYamlAndProcessAttachments } from "../../processor/yaml.ts";
 import { markdownToBlocks } from "../deps.ts";
+import { Converter } from "../../converter/converter.ts";
+import { parseYamlAndProcessAttachments } from "../../processor/yaml.ts";
 
 /**
  * markdownをNotionブロックに変換
@@ -13,15 +13,15 @@ export async function convertMarkdownToNotionBlock(filePath: string) {
 
   try {
     const content = Deno.readTextFileSync(filePath);
-    const { md, frontmatter } = await convert({
+    // TODO: converterは外部注入できるようにリファクタリングする
+    const converter = new Converter(parseYamlAndProcessAttachments);
+    const { md, frontmatter } = await converter.convert({
       mdString: content,
       fileName: filePath,
-      frontmatterProcessor: parseYamlAndProcessAttachments,
     });
-    return markdownToBlocks(md, true);
+    const blocks = markdownToBlocks(md, true);
+    return { blocks, frontmatter };
   } catch (e) {
-    const error = e as Error;
-    console.error(error.message);
-    return [];
+    throw e;
   }
 }
