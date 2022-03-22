@@ -1,4 +1,4 @@
-import { parse } from "../../deps.ts";
+import { basename, dirname, ensureFile, parse } from "../../deps.ts";
 import { AsyncRay, Command, Kia } from "../deps.ts";
 import { Api } from "../api.ts";
 import { NOTION_ROOT_PARENT_ID } from "../constant.ts";
@@ -11,6 +11,7 @@ import {
   getFileTitle,
   readDirRecursively,
 } from "../util/util.ts";
+// import { Chain } from "https://deno.land/x/async_ray@3.2.1/mod.ts";
 
 const rootDirectory = "./cli/test/md";
 const filePathList = readDirRecursively(rootDirectory);
@@ -48,6 +49,20 @@ const addContent = async (
     mdFilePath,
   );
   const responce = await api.appendChildrenBlock(pageId, blocks);
+  // 画像ファイルへの参照
+  // if (frontmatter.valid && frontmatter.value) {
+  //   const path = parse(mdFilePath);
+  //   Chain(frontmatter.value).aForEach(async (attachment) => {
+  //     const { isFile } = await Deno.stat(
+  //       `${path.dir}/${path.name}_添付/${attachment.fileName}`,
+  //     );
+  //     console.log(
+  //       isFile
+  //         ? `${path.dir}/${path.name}_添付/${attachment.fileName} exist`
+  //         : "error!!",
+  //     );
+  //   });
+  // }
 };
 
 /** 画像アップロード */
