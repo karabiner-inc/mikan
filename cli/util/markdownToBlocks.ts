@@ -19,7 +19,7 @@ export async function convertMarkdownToNotionBlock(filePath: string) {
       mdString: content,
       fileName: filePath,
     });
-    const blocks = markdownToBlocks(md, true);
+    const blocks = markdownToBlocks(md);
     return { blocks, frontmatter };
   } catch (e) {
     throw e;
