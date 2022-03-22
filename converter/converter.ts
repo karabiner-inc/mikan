@@ -1,5 +1,5 @@
 import {
-  AsyncRay,
+  Chain,
   NodeHtmlMarkdown,
   Parent,
   remark,
@@ -60,28 +60,33 @@ export class Converter {
     let frontmatter: Result<Attachment[]> = { valid: false, value: undefined };
     const ast: Parent = await this.mdParser.parse(param.mdString);
 
-    ast.children = await AsyncRay(ast.children).aMap(async (child) => {
-      switch (child.type) {
-        case "html":
-          // if iframe tag found, output log
-          if (hasIframe(child.value)) {
-            log({ fileName: param.fileName, type: "iframe" });
-          } else {
-            // convert html -> md
-            const md = NodeHtmlMarkdown.translate(child.value);
-            const childAst = await this.mdParser.parse(md);
-            return childAst.children[0];
-          }
-          break;
-        case "table":
-          log({ fileName: param.fileName, type: "table" });
-          break;
-        case "yaml":
-          frontmatter = this.frontmatterProcessor(child.value);
-          break;
-      }
-      return child;
-    });
+    ast.children = await Chain(ast.children)
+      .aMap(async (child) => {
+        switch (child.type) {
+          case "html":
+            // if iframe tag found, output log
+            if (hasIframe(child.value)) {
+              log({ fileName: param.fileName, type: "iframe" });
+            } else {
+              // convert html -> md
+              const md = NodeHtmlMarkdown.translate(child.value);
+              const childAst = await this.mdParser.parse(md);
+              return childAst.children[0];
+            }
+            break;
+          case "table":
+            log({ fileName: param.fileName, type: "table" });
+            break;
+          case "yaml":
+            frontmatter = this.frontmatterProcessor(child.value);
+            break;
+        }
+        return child;
+      })
+      .aFilter((child) => Promise.resolve(child.type !== "yaml"))
+      .process();
+    // remove frontmatter
+    // ast.children = ast.children.filter((child) => child.type !== "yaml");
 
     const md = this.mdParser.stringify(ast as Root) as string;
 
