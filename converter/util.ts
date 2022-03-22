@@ -62,3 +62,10 @@ export const log = (
   // 4. release resource
   file.close();
 };
+
+/**
+ * return true if str has iframe tag
+ */
+export const hasIframe = (htmlString: string): boolean => {
+  return htmlString.search(/<iframe/) !== -1;
+};

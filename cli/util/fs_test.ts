@@ -1,5 +1,5 @@
-import { readDirRecursively } from "@/util/fs.ts";
-import { assertEquals } from "@/dev_deps.ts";
+import { readDirRecursively } from "../util/fs.ts";
+import { assertEquals } from "../dev_deps.ts";
 
 Deno.test("test for readDirRecursively()", () => {
   const result = readDirRecursively("./test");

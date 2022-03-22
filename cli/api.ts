@@ -1,12 +1,16 @@
-import { NOTION_ROOT_PARENT_ID } from "./constant.ts";
-import { types } from "./di/types.ts";
-import { Client, Inject, Service } from "./deps.ts";
+import { NOTION_API_KEY, NOTION_ROOT_PARENT_ID } from "./constant.ts";
+import { Client, NotionLogLevel } from "./deps.ts";
 import { PageInfo } from "./type/PageInfo.ts";
 import { log, sleep } from "./util/util.ts";
 
-@Service()
 export class Api {
-  constructor(@Inject(types.client) private client: Client) {}
+  private client: Client;
+  constructor() {
+    this.client = new Client({
+      auth: NOTION_API_KEY,
+      logLevel: NotionLogLevel.DEBUG,
+    });
+  }
 
   // ページ内のブロックを取得
   async getBlock(blockId: string) {
@@ -102,7 +106,7 @@ export class Api {
         block_id,
         children: contents,
       });
-      // log.debug({ has_more, results });
+      return results;
     } catch (error: any) {
       log.error(error?.body);
     }
@@ -111,7 +115,7 @@ export class Api {
   // 空ページを追加
   addEmptyPage = async (
     title: string,
-    parentPageId = NOTION_ROOT_PARENT_ID
+    parentPageId = NOTION_ROOT_PARENT_ID,
   ) => {
     try {
       await sleep();
@@ -128,10 +132,10 @@ export class Api {
         },
         children: [],
       });
-      // log.debug({ id, parent });
       return id;
-    } catch (error: any) {
-      log.error(error?.body);
+    } catch (e) {
+      const error = e as Error;
+      log.error(error.message);
       return "";
     }
   };
@@ -141,7 +145,7 @@ export class Api {
    */
   createPage = async (
     title: string,
-    parentPageId: string
+    parentPageId: string,
   ): Promise<PageInfo> => {
     const pageId = await this.addEmptyPage(title, parentPageId);
     return { title, pageId, parentPageId };

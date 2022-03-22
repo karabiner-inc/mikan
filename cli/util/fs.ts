@@ -1,8 +1,9 @@
-const excludes = [".DS_Store"];
+const excludes = [".DS_Store", "_添付"];
 
+/** ディレクトリの中を再帰的に走査してファイルリストを返す */
 export const readDirRecursively = (
   rootDir: string,
-  files: string[] = []
+  files: string[] = [],
 ): string[] => {
   const pathList = Deno.readDirSync(rootDir);
   const dirs: string[] = [];
@@ -10,7 +11,7 @@ export const readDirRecursively = (
     const stat = Deno.statSync(`${rootDir}/${path.name}`);
     if (stat.isDirectory) {
       dirs.push(`${rootDir}/${path.name}`);
-    } else if (excludes.find((v) => v !== path.name)) {
+    } else if (path.name.endsWith("md")) {
       files.push(`${rootDir}/${path.name}`);
     }
   }

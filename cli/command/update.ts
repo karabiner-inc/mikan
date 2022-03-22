@@ -1,10 +1,10 @@
 import { Api } from "../api.ts";
 import { Command } from "../deps.ts";
 import { echoFinish, echoHeader, log } from "../util/util.ts";
-import { apiServiceCollection } from "../di/serviceCollection.ts";
 // import { NOTION_ROOT_PARENT_ID } from "../constant.ts";
 
-const api = apiServiceCollection.get(Api);
+// const api = apiServiceCollection.get(Api);
+const api = new Api();
 
 export const update = new Command()
   .name("update")
