@@ -1,7 +1,7 @@
-import { basename, dirname, ensureFile, parse } from "../../deps.ts";
+import { extname, parse } from "../../deps.ts";
 import { AsyncRay, Command, Kia } from "../deps.ts";
 import { Api } from "../api.ts";
-import { NOTION_ROOT_PARENT_ID } from "../constant.ts";
+import { NOTION_ROOT_PARENT_ID, TOKEN_V2 } from "../constant.ts";
 import { PageInfoList } from "../PageInfoList.ts";
 import { PageInfo } from "../type/PageInfo.ts";
 import {
@@ -11,7 +11,9 @@ import {
   getFileTitle,
   readDirRecursively,
 } from "../util/util.ts";
-// import { Chain } from "https://deno.land/x/async_ray@3.2.1/mod.ts";
+import { NotionUnofficialClient } from "../../unofficialNotionClient/unofficialNotionClient.ts";
+import { updateEmbeddedFileOps } from "../../unofficialNotionClient/operation.ts";
+import { Chain } from "https://deno.land/x/async_ray@3.2.1/mod.ts";
 
 const rootDirectory = "./cli/test/md";
 const filePathList = readDirRecursively(rootDirectory);
@@ -49,43 +51,47 @@ const addContent = async (
     mdFilePath,
   );
   const responce = await api.appendChildrenBlock(pageId, blocks);
-  // 画像ファイルへの参照
-  // if (frontmatter.valid && frontmatter.value) {
-  //   const path = parse(mdFilePath);
-  //   Chain(frontmatter.value).aForEach(async (attachment) => {
-  //     const { isFile } = await Deno.stat(
-  //       `${path.dir}/${path.name}_添付/${attachment.fileName}`,
-  //     );
-  //     console.log(
-  //       isFile
-  //         ? `${path.dir}/${path.name}_添付/${attachment.fileName} exist`
-  //         : "error!!",
-  //     );
-  //   });
-  // }
+  responce?.forEach((block) => {
+    if (block.type === "image" && block.image.type === "external") {
+      // 画像ファイルへの参照
+      if (frontmatter.valid && frontmatter.value) {
+        const path = parse(mdFilePath);
+        Chain(frontmatter.value).aForEach(async (attachment) => {
+          if (attachment.url === block.image.external.url) {
+            await uploadImageToBlock(
+              `${path.dir}/${path.name}_添付/${attachment.fileName}`,
+              block.id,
+            );
+          }
+        });
+      }
+    }
+  });
 };
 
 /** 画像アップロード */
 const uploadImageToBlock = async (imagePath: string, blockId: string) => {
-  console.log(`upload ${imagePath} to ${blockId}`); // const userId = "0ca08d86-a80a-4c82-8f28-3952e3758739";
-  // const client = new NotionUnofficialClient({ token_v2: TOKEN_V2 });
-  //
-  // try {
-  //   const { fileId, fileUrl } = await client.uploadFile(
-  //     imagePath,
-  //     extname(imagePath).slice(1),
-  //   );
-  //
-  //   const ops = updateEmbeddedFileOps(blockId, {
-  //     userId,
-  //     fileId,
-  //     fileUrl,
-  //   });
-  //   await client.submitTransaction(ops);
-  // } catch (e: unknown) {
-  //   const error = e as Error;
-  //   throw error;
-  // }
+  console.log(`upload ${imagePath} to ${blockId}`);
+  const userId = "0ca08d86-a80a-4c82-8f28-3952e3758739";
+  const client = new NotionUnofficialClient({ token_v2: TOKEN_V2 });
+
+  try {
+    const { fileId, fileUrl } = await client.uploadFile(
+      imagePath,
+      extname(imagePath).slice(1),
+    );
+
+    const ops = updateEmbeddedFileOps(blockId, {
+      userId,
+      fileId,
+      fileUrl,
+    });
+    await client.submitTransaction(ops);
+  } catch (e: unknown) {
+    const error = e as Error;
+    console.error(error.message);
+    throw error;
+  }
 };
 
 /**
