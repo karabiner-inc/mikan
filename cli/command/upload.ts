@@ -3,7 +3,6 @@ import { AsyncRay, Command, Kia } from "../deps.ts";
 import { Api } from "../api.ts";
 import { NOTION_ROOT_PARENT_ID } from "../constant.ts";
 import { PageInfoList } from "../PageInfoList.ts";
-// import { apiServiceCollection } from "../di/serviceCollection.ts";
 import { PageInfo } from "../type/PageInfo.ts";
 import {
   convertMarkdownToNotionBlock,
@@ -17,7 +16,6 @@ const rootDirectory = "./cli/test/md";
 const filePathList = readDirRecursively(rootDirectory);
 const pageInfoList = new PageInfoList();
 
-// const api = apiServiceCollection.get(Api);
 const api = new Api();
 const spinner = new Kia();
 
