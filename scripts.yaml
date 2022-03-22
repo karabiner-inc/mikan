@@ -4,7 +4,7 @@ config: ./tsconfig.json
 scripts:
   cli:
     desc: call notion api
-    cmd: deno run mikan/cli.ts
+    cmd: deno run --no-check=remote cli/cli.ts
     allow:
       read: true
       env: true
