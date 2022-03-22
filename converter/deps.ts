@@ -1,7 +1,8 @@
 // remark
 export { remark } from "https://esm.sh/remark?dts";
 import remarkGfm from "https://esm.sh/remark-gfm?dts";
-export { remarkGfm };
+import remarkFrontmatter from "https://cdn.skypack.dev/remark-frontmatter?dts";
+export { remarkFrontmatter, remarkGfm };
 export type { Parent, Root } from "https://cdn.skypack.dev/@types/mdast?dts";
 
 // html to markdown

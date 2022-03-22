@@ -3,35 +3,60 @@ import {
   NodeHtmlMarkdown,
   Parent,
   remark,
+  remarkFrontmatter,
   remarkGfm,
+  Root,
 } from "./deps.ts";
-import { log } from "./util.ts";
+import { hasIframe, log } from "./util.ts";
+import type { Attachment, Result } from "../processor/yaml.ts";
 
-/**
- * return true if str has iframe tag
- */
-const hasIframe = (htmlString: string): boolean => {
-  return htmlString.search(/<iframe/) !== -1;
+type ConverterParam<T> = {
+  readonly mdString: string;
+  readonly fileName: string;
+  readonly frontmatterProcessor: (yamlString: string) => Result<T>;
+};
+
+type ConvertedMarkdown = {
+  md: string;
+  frontmatter: any;
 };
 
 /**
  * Convert inline html to markdown syntax as much as possible
+ *
  * support tag
  * <iframe> -> output log
  * Table -> output log
  * <img> -> convert ![](url)
- * @param md markdown string
+ *
+ * frontmatter support
+ * yaml
+ *
+ * @param param
+ * @param param.mdString string of markdown
+ * @param param.fileName
+ * @param param.frontmatterProcessor function processing frontmatter
+ *
+ * @returns return
+ * @returns return.md converted string of markdown
+ * @returns return.frontmatter frontmatte object
  */
-export const convert = async (md: string, fileName?: string) => {
-  const processor = remark().use(remarkGfm);
-  const ast: Parent = await processor.parse(md);
+export async function convert(
+  param: ConverterParam<Attachment[]>,
+): Promise<ConvertedMarkdown> {
+  let frontmatter;
+  const processor = remark()
+    .use(remarkGfm) // support github-flavored-markdown
+    .use(remarkFrontmatter) // support frontmatter
+  ;
+  const ast: Parent = await processor.parse(param.mdString);
 
   ast.children = await AsyncRay(ast.children).aMap(async (child) => {
     switch (child.type) {
       case "html":
         // if iframe tag found, output log
         if (hasIframe(child.value)) {
-          log({ fileName, type: "iframe" });
+          log({ fileName: param.fileName, type: "iframe" });
         } else {
           // convert html -> md
           const md = NodeHtmlMarkdown.translate(child.value);
@@ -40,13 +65,16 @@ export const convert = async (md: string, fileName?: string) => {
         }
         break;
       case "table":
-        log({ fileName, type: "table" });
+        log({ fileName: param.fileName, type: "table" });
+        break;
+      case "yaml":
+        frontmatter = param.frontmatterProcessor(child.value);
         break;
     }
     return child;
   });
 
-  const file = processor.stringify(ast as Root);
+  const md = processor.stringify(ast as Root) as string;
 
-  return file as string;
-};
+  return { md, frontmatter };
+}
