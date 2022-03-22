@@ -15,9 +15,32 @@ export type Attachment = {
   readonly url: string;
 };
 
+export type FrontmatterProcessor<T> = (input: string) => Result<T>;
+type YamlProcessor<T> = (yaml: Frontmatter) => Result<T>;
+
+const attachmentProcessor: YamlProcessor<Attachment[]> = (
+  yaml: Frontmatter,
+) => {
+  if (yaml.attachments) {
+    // separate fileName|url
+    const pattern = / https:\/\/karabiner\.notepm\.jp/;
+    const value = yaml.attachments.map((attachment) => {
+      const index = attachment.search(pattern);
+
+      const fileName = attachment.slice(0, index);
+      const url = attachment.slice(index + 1);
+
+      return { fileName, url };
+    });
+
+    return { valid: true, value };
+  }
+  return { valid: false, value: undefined };
+};
+
 const parseYamlAndProcess = <T>(
   yamlString: string,
-  processor: (yaml: Frontmatter) => Result<T>,
+  processor: YamlProcessor<T>,
 ): Result<T> => {
   try {
     const yamlFrontmatter = parse(yamlString) as Frontmatter;
@@ -31,21 +54,5 @@ const parseYamlAndProcess = <T>(
 export function parseYamlAndProcessAttachments(
   yamlString: string,
 ): Result<Attachment[]> {
-  return parseYamlAndProcess(yamlString, (yaml: Frontmatter) => {
-    if (yaml.attachments) {
-      // separate fileName|url
-      const pattern = / https:\/\/karabiner\.notepm\.jp/;
-      const value = yaml.attachments.map((attachment) => {
-        const index = attachment.search(pattern);
-
-        const fileName = attachment.slice(0, index);
-        const url = attachment.slice(index + 1);
-
-        return { fileName, url };
-      });
-
-      return { valid: true, value };
-    }
-    return { valid: false, value: undefined };
-  });
+  return parseYamlAndProcess(yamlString, attachmentProcessor);
 }
