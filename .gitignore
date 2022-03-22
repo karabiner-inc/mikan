@@ -3,4 +3,5 @@
 
 /md/
 .env
+!.env.sample
 output.json
