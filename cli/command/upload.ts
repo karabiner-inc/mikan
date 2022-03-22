@@ -3,24 +3,25 @@ import { AsyncRay, Command, Kia } from "../deps.ts";
 import { Api } from "../api.ts";
 import { NOTION_ROOT_PARENT_ID } from "../constant.ts";
 import { PageInfoList } from "../PageInfoList.ts";
-import { apiServiceCollection } from "../di/serviceCollection.ts";
+// import { apiServiceCollection } from "../di/serviceCollection.ts";
 import { PageInfo } from "../type/PageInfo.ts";
 import {
   convertMarkdownToNotionBlock,
   echoFinish,
   echoHeader,
   getFileTitle,
-  log,
   readDirRecursively,
 } from "../util/util.ts";
 
-const rootDirectory = "./md";
+const rootDirectory = "./cli/test/md";
 const filePathList = readDirRecursively(rootDirectory);
 const pageInfoList = new PageInfoList();
 
-const api = apiServiceCollection.get(Api);
+// const api = apiServiceCollection.get(Api);
+const api = new Api();
 const spinner = new Kia();
 
+/** ファイルパスからタイトルを取得しそのページを生成する */
 const createEmptyNotionPage = async (
   path: string,
   parentPageId: string,
@@ -38,26 +39,50 @@ const createEmptyNotionPage = async (
 
 /**
  * マークダウンファイルをブロックに変換しNotionに追加する
- * @param path パス
+ * @param mdFilePath パス
  * @param pageId ページID
  */
-const addContent = async (path: string, pageId: string): Promise<void> => {
-  // await spinner.start();
-  const spinnerText = `add contents: ${parse(path).base}`;
-  spinner.start();
-  spinner.set({ text: spinnerText, indent: 4 });
-  const blocks = await convertMarkdownToNotionBlock(path);
-  await api.appendChildrenBlock(pageId, blocks);
-  spinner.stop();
+const addContent = async (
+  mdFilePath: string,
+  pageId: string,
+): Promise<void> => {
+  const { blocks, frontmatter } = await convertMarkdownToNotionBlock(
+    mdFilePath,
+  );
+  const responce = await api.appendChildrenBlock(pageId, blocks);
+};
+
+/** 画像アップロード */
+const uploadImageToBlock = async (imagePath: string, blockId: string) => {
+  console.log(`upload ${imagePath} to ${blockId}`); // const userId = "0ca08d86-a80a-4c82-8f28-3952e3758739";
+  // const client = new NotionUnofficialClient({ token_v2: TOKEN_V2 });
+  //
+  // try {
+  //   const { fileId, fileUrl } = await client.uploadFile(
+  //     imagePath,
+  //     extname(imagePath).slice(1),
+  //   );
+  //
+  //   const ops = updateEmbeddedFileOps(blockId, {
+  //     userId,
+  //     fileId,
+  //     fileUrl,
+  //   });
+  //   await client.submitTransaction(ops);
+  // } catch (e: unknown) {
+  //   const error = e as Error;
+  //   throw error;
+  // }
 };
 
 /**
  * パスを分解したのち最初の2つの要素を取り除いた配列を返す
+ * ./md/path/to/file.md => [path,to,file.md]
  * @param path
  * @returns 分解したパスの配列
  */
 const splitPath = (path: string): string[] => {
-  return path.split("/").slice(2);
+  return path.split("/").slice(4);
 };
 
 /**
@@ -65,7 +90,6 @@ const splitPath = (path: string): string[] => {
  * @param path ディレクトリパス
  */
 const createNotionPage = async (path: string): Promise<void> => {
-  // await spinner.start();
   let parentPageId = NOTION_ROOT_PARENT_ID;
 
   // ルートページであれば新規作成|ページがまだなければ新規作成
@@ -73,20 +97,28 @@ const createNotionPage = async (path: string): Promise<void> => {
     const spinnerText = `creating ${str}`;
     spinner.start();
     spinner.set({ text: spinnerText, indent: 2 });
+
+    // create page
     const pageInfo = await createEmptyNotionPage(str, parentPageId);
+
+    // update parent page id
     parentPageId = pageInfo.pageId;
   });
   spinner.succeed(`created ${path}`);
 
-  // コンテンツの追加
+  // add content
   const pageId = parentPageId;
+  const spinnerText = `add contents: ${parse(path).base}`;
+  spinner.start();
+  spinner.set({ text: spinnerText, indent: 4 });
   await addContent(path, pageId);
+  spinner.stop();
 };
 
-export const motion = new Command()
-  .name("motion")
+export const upload = new Command()
+  .name("upload")
   .description("import md to Notion")
-  .action(async (_options: any) => {
+  .action(async (_) => {
     echoHeader("mikan motion");
     await AsyncRay(filePathList).aForEach(createNotionPage);
     echoFinish();
