@@ -85,8 +85,6 @@ export class Converter {
       })
       .aFilter((child) => Promise.resolve(child.type !== "yaml"))
       .process();
-    // remove frontmatter
-    // ast.children = ast.children.filter((child) => child.type !== "yaml");
 
     const md = this.mdParser.stringify(ast as Root) as string;
 
