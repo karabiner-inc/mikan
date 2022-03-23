@@ -2,7 +2,7 @@
 export { config } from "https://deno.land/x/dotenv@v3.1.0/mod.ts";
 
 // async array
-export { AsyncRay } from "https://deno.land/x/async_ray@3.2.1/mod.ts";
+export { AsyncRay, Chain } from "https://deno.land/x/async_ray@3.2.1/mod.ts";
 
 // cliffy
 export {
