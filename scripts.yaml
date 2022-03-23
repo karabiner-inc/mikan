@@ -4,7 +4,8 @@ config: ./tsconfig.json
 scripts:
   cli:
     desc: call notion api
-    cmd: deno run --no-check=remote cli/cli.ts
+    cmd: deno run cli/mikan.ts
+    noCheck: true
     allow:
       read: true
       env: true
@@ -25,7 +26,6 @@ scripts:
     noCheck: true
     env:
       DEBUG_MODE: "true"
-      TOKEN_V2: "7ad40fae0139db4010c486dac3e4ab6f273f163efda748d885512e8144c55643864fbc7092031a5f8b63da8b63249c4e3c25cdd7f163ea48ff696e81e6f515cd328a67e4e32eebee13dabec2441e"
     allow:
       all: true
   test:converter:
@@ -33,5 +33,7 @@ scripts:
     allow:
       all: true
     noCheck: true
+  lint:cli:
+    cmd: deno lint ./cli
   doc:
     cmd: gh markdown-preview --light-mode --reload --verbose README.md
