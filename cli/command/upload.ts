@@ -10,6 +10,7 @@ import {
   echoHeader,
   getFileTitle,
   readDirRecursively,
+  sleep,
 } from "../util/util.ts";
 import { NotionUnofficialClient } from "../../unofficialNotionClient/unofficialNotionClient.ts";
 import { updateEmbeddedFileOps } from "../../unofficialNotionClient/operation.ts";
@@ -76,16 +77,20 @@ const uploadImageToBlock = async (imagePath: string, blockId: string) => {
   const client = new NotionUnofficialClient({ token_v2: TOKEN_V2 });
 
   try {
+    await sleep();
     const { fileId, fileUrl } = await client.uploadFile(
       imagePath,
       extname(imagePath).slice(1),
     );
 
+    await sleep();
     const ops = updateEmbeddedFileOps(blockId, {
       userId,
       fileId,
       fileUrl,
     });
+
+    await sleep();
     await client.submitTransaction(ops);
   } catch (e: unknown) {
     const error = e as Error;
