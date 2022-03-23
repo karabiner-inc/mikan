@@ -16,5 +16,5 @@ export const readDirRecursively = (
     }
   }
   dirs.forEach((dir) => (files = readDirRecursively(dir, files)));
-  return files;
+  return files.sort();
 };
