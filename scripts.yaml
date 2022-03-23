@@ -8,6 +8,7 @@ scripts:
     noCheck: true
     allow:
       read: true
+      write: true
       env: true
       net: true
   test:all:
