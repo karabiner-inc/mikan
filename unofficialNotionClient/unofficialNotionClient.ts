@@ -7,7 +7,7 @@ import {
   Operation,
 } from "./type.ts";
 import { API_BASE_URL } from "./constant.ts";
-import { log } from "../src/util/util.ts";
+import { log } from "../cli/util/util.ts";
 import { getContentTypeFromExtension, requestNotion } from "./util.ts";
 
 const endpoint = {
