@@ -1,15 +1,19 @@
-import { NOTION_API_KEY, NOTION_ROOT_PARENT_ID } from "./constant.ts";
+import {
+  DEBUG_MODE,
+  NOTION_API_KEY,
+  NOTION_ROOT_PARENT_ID,
+} from "./constant.ts";
 import { Client, NotionLogLevel } from "./deps.ts";
 import { PageInfo } from "./type/PageInfo.ts";
 import { log, sleep } from "./util/util.ts";
 
+const logLevel = DEBUG_MODE ? NotionLogLevel.DEBUG : NotionLogLevel.ERROR;
+
 export class Api {
   private client: Client;
+
   constructor() {
-    this.client = new Client({
-      auth: NOTION_API_KEY,
-      logLevel: NotionLogLevel.DEBUG,
-    });
+    this.client = new Client({ auth: NOTION_API_KEY, logLevel });
   }
 
   // ページ内のブロックを取得
