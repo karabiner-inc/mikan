@@ -19,7 +19,7 @@ ghq get https://github.com/karabiner-inc/mikan
 gh repo clone https://github.com/karabiner-inc/mikan
 ```
 
-2. Install deno, vr, and dex command
+2. Install deno
 
 ```bash
 # deno
