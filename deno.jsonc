@@ -8,6 +8,6 @@
     "test:converter": "deno test --no-check --allow-read --allow-write --allow-net --allow-env ./converter",
     "test:unofficialNotionClient": "deno test --no-check --allow-read --allow-write --allow-net --allow-env ./unofficialNotionClient",
     "lint:cli": "deno lint ./cli",
-    "doc": "gh markdown-preview --light-mode --reload --verbose README.md",
+    "doc": "gh markdown-preview --light-mode --verbose README.md",
   }
 }
