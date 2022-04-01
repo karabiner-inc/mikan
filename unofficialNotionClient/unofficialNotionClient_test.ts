@@ -1,10 +1,10 @@
-import { log } from "../../src/util/logger.ts";
-import { extname } from "../../deps.ts";
-import { TOKEN_V2 } from "../constant.ts";
-import { updateEmbeddedFileOps } from "../operation.ts";
-import { NotionUnofficialClient } from "../unofficialNotionClient.ts";
-import { convertDashId, getContentTypeFromExtension } from "../util.ts";
-import { Operation } from "../type.ts";
+import { log } from "../cli/util/logger.ts";
+import { extname } from "../deps.ts";
+import { NOTION_ROOT_PARENT_ID, TOKEN_V2, USER_ID } from "../cli/constant.ts";
+import { updateEmbeddedFileOps } from "./operation.ts";
+import { NotionUnofficialClient } from "./unofficialNotionClient.ts";
+import { convertDashId } from "./util.ts";
+import { Operation } from "./type.ts";
 
 Deno.test("loadUserContent", async () => {
   // 非公式クライアントのインスタンス生成
@@ -53,9 +53,10 @@ Deno.test("getPageById", async () => {
  *     at async Object.runTests (deno:runtime/js/40_testing.js:786:22)
  */
 Deno.test("upload image to Notion", async () => {
-  const fileName = "./md/github.png";
-  const userId = "0ca08d86-a80a-4c82-8f28-3952e3758739";
-  const pageId = "68fbbc5bde1f400ba633cece752e74d1";
+  const fileName =
+    "./test/md/image/real_image_添付/Screen Shot 2021-12-14 at 14.58.31.png";
+  const userId = USER_ID;
+  const pageId = NOTION_ROOT_PARENT_ID;
 
   // 非公式クライアントのインスタンス生成
   const client = new NotionUnofficialClient({ token_v2: TOKEN_V2 });
@@ -64,6 +65,7 @@ Deno.test("upload image to Notion", async () => {
   //   // 1. ページオブジェクトをページIDから取得
   //   const ROOT_PAGE_ID = convertDashId(pageId);
   //   const rootPage = await client.getPageById(ROOT_PAGE_ID);
+  //   log.debug(rootPage);
   //
   //   // 2. 画像をアップロード
   //   const { fileId, fileUrl } = await client.uploadFile(
@@ -76,6 +78,7 @@ Deno.test("upload image to Notion", async () => {
   //   let ops: Operation[];
   //   for (const blockId in rootPage.recordMap.block) {
   //     const { value } = rootPage.recordMap.block[blockId];
+  //     // console.dir(value, { depth: 10 });
   //     if (value.type === "embed" && !value.properties) {
   //       ops = updateEmbeddedFileOps(blockId, {
   //         userId,
