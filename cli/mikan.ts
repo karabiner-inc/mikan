@@ -9,9 +9,8 @@ const description = `
 `;
 const version = "0.0.1";
 const example = {
-  title: "move your-knowledge to Notion",
-  contents: `${colors.bgBlack.bold("$ mikan move")}
-search md file from ${colors.bold.green("./md")} and call Notion API`,
+  title: "upload markdown to Notion",
+  contents: `${colors.bold("$ mikan upload ./md")}`,
 };
 
 await new Command()
@@ -19,15 +18,12 @@ await new Command()
   .name(name)
   .version(version)
   .description(description)
+  .example(example.title, example.contents)
   .env("NOTION_API_KEY=<value:string>", "Notion API key")
   .env("NOTION_ROOT_PARENT_ID=<value:string>", "Notion page id")
-  .env("NOTION_DATABASE_ID=<value:string>", "Notion database id")
-  .example(example.title, example.contents)
-  .arguments("<command> [option]")
   .command(upload.getName(), upload)
   .command(get.getName(), get)
   .command(update.getName(), update)
-  .option("-d, --directory [directory:string]", "directory store markdown file")
   .command("help", new HelpCommand().global())
   .command("completions", new CompletionsCommand())
   .parse(Deno.args);

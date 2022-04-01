@@ -9,7 +9,7 @@
 
 ```bash
 mikan --help
-  Usage:   mikan <command> [option]
+  Usage:   mikan
   Version: 0.0.1
 
   Description:
@@ -34,12 +34,10 @@ mikan --help
 
     NOTION_API_KEY         <value>  - Notion API key
     NOTION_ROOT_PARENT_ID  <value>  - Notion page id
-    NOTION_DATABASE_ID     <value>  - Notion database id
 
   Examples:
 
-    Move your-knowledge to Notion: $ mikan move
-                                   search md file from ./md and call Notion API
+    Upload markdown to Notion: $ mikan upload ./md
 ```
 
 ## Install
