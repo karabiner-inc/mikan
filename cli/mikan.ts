@@ -1,5 +1,5 @@
 import { colors, Command, CompletionsCommand, HelpCommand } from "./deps.ts";
-import { UploadCommand } from "./command/upload.ts";
+import { upload } from "./command/upload.ts";
 import { get } from "./command/get.ts";
 import { update } from "./command/update.ts";
 
@@ -24,7 +24,7 @@ await new Command()
   .env("NOTION_DATABASE_ID=<value:string>", "Notion database id")
   .example(example.title, example.contents)
   .arguments("<command> [option]")
-  .command("upload", new UploadCommand())
+  .command(upload.getName(), upload)
   .command(get.getName(), get)
   .command(update.getName(), update)
   .option("-d, --directory [directory:string]", "directory store markdown file")
