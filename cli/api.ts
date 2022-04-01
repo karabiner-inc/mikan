@@ -16,6 +16,18 @@ export class Api {
     this.client = new Client({ auth: NOTION_API_KEY, logLevel });
   }
 
+  async getPersonUsers() {
+    await sleep();
+    try {
+      const { results } = await this.client.users.list();
+      const personUsers = results.filter((user) => user.type === "person");
+      return personUsers;
+    } catch (error: any) {
+      log.error(error?.body);
+      return false;
+    }
+  }
+
   // ページ内のブロックを取得
   async getBlock(blockId: string) {
     await sleep();
