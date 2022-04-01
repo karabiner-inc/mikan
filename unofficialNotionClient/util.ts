@@ -111,6 +111,7 @@ export const getContentTypeFromExtension = (ext: string): string => {
   switch (ext) {
     case "jpeg":
     case "jpg":
+    case "JPG":
       return "image/jpeg";
     case "png":
       return "image/png";
