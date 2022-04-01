@@ -42,10 +42,22 @@ mikan --help
                                    search md file from ./md and call Notion API
 ```
 
+## Install
 
+## Setup
 
+Get Notion API key and page/database id
 
+  1. Follow [guide](https://developers.notion.com/docs)
+  2. Create root page
+  3. Click `Share` and invide your integration
+  4. Set environment variables
 
+     ```bash
+     export NOTION_API_KEY=<your api key>
+     export NOTION_ROOT_PARENT_ID=<your parent page id>
+     ```
+  5. Completed!
 
 ## Development
 
