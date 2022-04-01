@@ -13,7 +13,7 @@ export const existsFile = async (filePath: string) => {
  */
 const parseJson = (jsonString: string) => {
   try {
-    return JSON.parse(jsonString) as { file: string; type: string }[];
+    return JSON.parse(jsonString) as { file: string; type: string[] }[];
   } catch (_e) {
     return [];
   }
@@ -25,7 +25,7 @@ const parseJson = (jsonString: string) => {
  * [
  *   {
  *     "file": string,
- *     "type": string,
+ *     "type": string[],
  *   }
  * ]
  */
@@ -46,16 +46,25 @@ export const log = (
   // 3. write log message
   let message = "";
   if (text === "") {
-    message = JSON.stringify([
-      {
-        file: fileName,
-        type,
-      },
-    ]);
+    message = JSON.stringify(
+      [
+        {
+          file: fileName,
+          type: [type],
+        },
+      ],
+      null,
+      2,
+    );
   } else {
     const oldMessage = parseJson(text);
-    oldMessage.push({ file: fileName, type });
-    message = JSON.stringify(oldMessage);
+    const index = oldMessage.findIndex(({ file }) => file === fileName);
+    if (index !== -1) {
+      oldMessage[index].type.push(type);
+    } else {
+      oldMessage.push({ file: fileName, type: [type] });
+    }
+    message = JSON.stringify(oldMessage, null, 2);
   }
   Deno.writeTextFileSync(filePath, message);
 
