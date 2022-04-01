@@ -8,36 +8,38 @@
 ## Usage
 
 ```bash
-$ mikan --help
+mikan --help
   Usage:   mikan <command> [option]
   Version: 0.0.1
 
   Description:
 
-マークダウンファイルをNotionに送信し新しいページとして挿入します
+
+    マークダウンファイルをNotionに送信し新しいページとして挿入します
 
   Options:
 
--h, --help     - Show this help.
--V, --version  - Show the version number for this program.
+    -h, --help     - Show this help.
+    -V, --version  - Show the version number for this program.
 
   Commands:
 
-motion                  - import md to Notion
-help         [command]  - Show this help or the help of a sub-command.
-completions             - Generate shell completions.
+    upload       <directory>  - import md to Notion
+    get          <target>     - get block info
+    update       <target>     - update
+    help         [command]    - Show this help or the help of a sub-command.
+    completions               - Generate shell completions.
 
   Environment variables:
 
-NOTION_API_KEY         <value>  - Notion API key
-NOTION_ROOT_PARENT_ID  <value>  - Notion page id
-NOTION_DATABASE_ID     <value>  - Notion database id
+    NOTION_API_KEY         <value>  - Notion API key
+    NOTION_ROOT_PARENT_ID  <value>  - Notion page id
+    NOTION_DATABASE_ID     <value>  - Notion database id
 
   Examples:
 
-Move your-knowledge to Notion: $ mikan move
-                               search md file from ./md and call Notion API
-
+    Move your-knowledge to Notion: $ mikan move
+                                   search md file from ./md and call Notion API
 ```
 
 ## Development
