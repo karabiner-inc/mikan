@@ -1,5 +1,6 @@
 // deno-lint-ignore-file camelcase no-explicit-any
 import { ky, urlJoin } from "./deps.ts";
+import { parse } from "../deps.ts";
 import {
   GetUploadFileUrlRequest,
   GetUploadFileUrlResponse,
@@ -130,7 +131,7 @@ export class NotionUnofficialClient {
 
       // 1. getUploadFileUrl
       const { url, signedPutUrl } = await this.getUploadFileUrl(
-        "github.png",
+        parse(fileName).base,
         contentType,
       );
 
