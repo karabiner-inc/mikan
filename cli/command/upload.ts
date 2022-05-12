@@ -78,14 +78,14 @@ const uploadImageToBlock = async (imagePath: string, blockId: string) => {
       extname(imagePath).slice(1),
     );
 
-    await sleep();
+    // await sleep();
     const ops = updateEmbeddedFileOps(blockId, {
       userId,
       fileId,
       fileUrl,
     });
 
-    await sleep();
+    // await sleep();
     await client.submitTransaction(ops);
   } catch (e: unknown) {
     const error = e as Error;
@@ -130,6 +130,9 @@ const addContent = async (
         const path = parse(mdFilePath);
         Chain(frontmatter.value).aForEach(async (attachment) => {
           if (attachment.url === block.image.external.url) {
+            // console.log(
+            //   `upload ${path.dir}/${path.name}_添付/${attachment.fileName}`,
+            // );
             await uploadImageToBlock(
               `${path.dir}/${path.name}_添付/${attachment.fileName}`,
               block.id,
@@ -149,5 +152,5 @@ const addContent = async (
  * @returns 分解したパスの配列
  */
 const splitPath = (path: string): string[] => {
-  return path.split("/").slice(3);
+  return path.split("/").slice(2);
 };

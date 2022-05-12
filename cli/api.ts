@@ -74,6 +74,19 @@ export class Api {
 
   async updatePage() {}
 
+  async getPage(pageId: string) {
+    try {
+      await sleep();
+      const { properties } = await this.client.pages.retrieve({
+        page_id: pageId,
+      });
+      return properties;
+    } catch (e: any) {
+      log.error("page doesn't exist");
+      return null;
+    }
+  }
+
   // ページがすでに存在するか判定
   isPageExist = async (pageId: string): Promise<boolean> => {
     try {
@@ -116,6 +129,9 @@ export class Api {
 
   // ページやブロックにコンテンツを追加
   appendChildrenBlock = async (block_id: string, contents: any[]) => {
+    const { properties } = await this.client.pages.retrieve({
+      page_id: block_id,
+    });
     try {
       await sleep();
       const { has_more, results } = await this.client.blocks.children.append({
@@ -123,8 +139,22 @@ export class Api {
         children: contents,
       });
       return results;
-    } catch (error: any) {
-      log.error(error?.body);
+    } catch (e) {
+      console.log();
+      const message = JSON.stringify(
+        {
+          title: properties?.title.title[0].text.content,
+          error: JSON.parse(e.body),
+        },
+        null,
+        2,
+      );
+      // log.error(message);
+      // log.info(
+      //   contents[6].bulleted_list_item.children[0].bulleted_list_item
+      //     .children[0].bulleted_list_item,
+      // );
+      log.info(message);
     }
   };
 

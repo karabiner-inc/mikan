@@ -19,9 +19,23 @@ export async function convertMarkdownToNotionBlock(filePath: string) {
       mdString: content,
       fileName: filePath,
     });
+    // console.log(md);
+    // console.log(frontmatter);
     const blocks = markdownToBlocks(md);
-    return { blocks, frontmatter };
+    // const mappedBlocks = blocks.map(deleteUndefinedChildren);
+    return { blocks: blocks, frontmatter };
   } catch (e) {
     throw e;
   }
 }
+
+const deleteUndefinedChildren = (block) => {
+  if (block?.bulleted_list_item) {
+    if (block.bulleted_list_item.children === undefined) {
+      delete block.bulleted_list_item.children;
+    } else {
+      block.bulleted_list_item.children.map(deleteUndefinedChildren);
+    }
+  }
+  return block;
+};

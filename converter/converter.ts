@@ -1,11 +1,18 @@
 import {
   Chain,
+  formatFromString,
   NodeHtmlMarkdown,
   Parent,
+  rehypeRaw,
+  rehypeRemark,
   remark,
   remarkFrontmatter,
   remarkGfm,
+  remarkParse,
+  remarkRehype,
+  remarkStringify,
   Root,
+  unified,
 } from "./deps.ts";
 import { hasIframe, log } from "./util.ts";
 import type {
@@ -26,9 +33,18 @@ type ConvertedMarkdown = {
 
 export class Converter {
   private frontmatterProcessor: FrontmatterProcessor<Attachment[]>;
-  private mdParser = remark()
+  private mdParser = unified()
+    .use(remarkParse)
+    .use(remarkFrontmatter)
     .use(remarkGfm) // support github-flavored-markdown
-    .use(remarkFrontmatter);
+    .use(remarkRehype, { allowDangerousHtml: true })
+    .use(rehypeRaw)
+    .use(rehypeRemark)
+    .use(remarkStringify);
+
+  private remarkParser = remark()
+    .use(remarkGfm)
+    .use(remarkFrontmatter); // support github-flavored-markdown
 
   constructor(
     frontmatterProcessor: FrontmatterProcessor<Attachment[]>,
@@ -58,20 +74,13 @@ export class Converter {
    */
   async convert(param: ConverterParam): Promise<ConvertedMarkdown> {
     let frontmatter: Result<Attachment[]> = { valid: false, value: undefined };
-    const ast: Parent = await this.mdParser.parse(param.mdString);
-
-    ast.children = await Chain(ast.children)
-      .aMap(async (child) => {
+    (this.remarkParser.parse(param.mdString) as Parent).children
+      .map((child) => {
         switch (child.type) {
           case "html":
             // if iframe tag found, output log
             if (hasIframe(child.value)) {
               log({ fileName: param.fileName, type: "iframe" });
-            } else {
-              // convert html -> md
-              const md = NodeHtmlMarkdown.translate(child.value);
-              const childAst = await this.mdParser.parse(md);
-              return childAst.children[0];
             }
             break;
           case "table":
@@ -82,12 +91,41 @@ export class Converter {
             break;
         }
         return child;
+      });
+
+    const file = await this.mdParser.process(param.mdString);
+    const ast: Parent = this.remarkParser.parse(file);
+
+    ast.children = ast.children
+      .map((child) => {
+        switch (child.type) {
+          case "html":
+            // if iframe tag found, output log
+            if (hasIframe(child.value)) {
+              child.value = "";
+            } else {
+              // convert html -> md
+              const md = NodeHtmlMarkdown.translate(child.value);
+              const childAst = this.mdParser.parse(md);
+              return childAst.children[0];
+            }
+            break;
+        }
+        return child;
       })
-      .aFilter((child) => Promise.resolve(child.type !== "yaml"))
-      .process();
+      .filter((child) => {
+        return child !== undefined && child.type !== "yaml";
+      });
+    const md = this.remarkParser.stringify(ast as Root) as string;
+    const { value } = await formatFromString(String(md));
 
-    const md = this.mdParser.stringify(ast as Root) as string;
-
-    return { md, frontmatter };
+    return {
+      md: (value as string)
+        .replaceAll("* ", "- ")
+        .replaceAll(/\n\s{4,}/g, "\n    ")
+        .replaceAll("\n\n", "\n")
+        .replaceAll(/(!\[.*\]\(.*\))/g, "\n\n$1\n\n"),
+      frontmatter,
+    };
   }
 }

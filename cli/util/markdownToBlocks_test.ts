@@ -74,3 +74,10 @@ Deno.test("convert real markdown file exported from notepm", async (test) => {
     assertEquals(imageBlocks.length, 2);
   });
 });
+
+Deno.test("convert complex markdown", async (test) => {
+  const { blocks, frontmatter } = await convertMarkdownToNotionBlock(
+    "./md/個人_15c5c5a9f6/tsuru/インターンシップ/チャットアプリ開発ハンズオン/01_プロジェクトのツリー構造と各ファイルの説明_0a559f6f96.md",
+  );
+  console.log(frontmatter);
+});

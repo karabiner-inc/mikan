@@ -60,14 +60,26 @@ export const log = {
     console.log(
       emoji.error,
       logColor.error.bold("[ERROR]"),
-      logColor.error(msg)
+      logColor.error(msg),
     );
+    exportMessageToLogFile(msg);
   },
   critical(msg: string) {
     console.log(
       emoji.critical,
       logColor.critical.bold("[CRITICAL]"),
-      logColor.critical(msg)
+      logColor.critical(msg),
     );
   },
+};
+
+const exportMessageToLogFile = (message: string) => {
+  Deno.writeTextFileSync(
+    "./error.log",
+    message + "\n",
+    {
+      append: true,
+      create: true,
+    },
+  );
 };
